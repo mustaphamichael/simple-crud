@@ -41,6 +41,14 @@ class PersistenceSuite
       whenReady(bookRepo.findById(1))(_.get.authorId == 1)
     }
 
+    // Note the returned value for an `Upsert` operation
+    // None - [Updated];  Some - [Inserted]
+    "update a single data" in {
+      val newName = "Martin O."
+      val author = whenReady(authorRepo.findById(1))(a => a).get.copy(name = newName)
+      whenReady(authorRepo.update(author))(_ shouldBe None)
+    }
+
     "delete a single data by id" in {
       whenReady(bookRepo.delete(1)) { result =>
         result shouldBe true
