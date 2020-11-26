@@ -33,8 +33,8 @@ class AuthorRoutes(repo: Schema#AuthorRepo)(implicit ec: ExecutionContext) exten
     } ~ put {
       entity(as[Author]) { author =>
         onSuccess(repo.update(author)) {
-          case data@Some(_) => complete(ResponseBody("Edit author successful", data))
-          case None => complete(ResponseBody("No change occurred"))
+          case data@Some(_) => complete(ResponseBody("A new author was created", data)) // Insert
+          case None => complete(ResponseBody("Request to update author was successful")) // Update
         }
       }
     }

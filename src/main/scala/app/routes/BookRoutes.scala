@@ -33,8 +33,8 @@ class BookRoutes(repo: Schema#BookRepo)(implicit ec: ExecutionContext) extends J
     } ~ put {
       entity(as[Book]) { book =>
         onSuccess(repo.update(book)) {
-          case data@Some(_) => complete(ResponseBody("Edit book successful", data))
-          case None => complete(ResponseBody("No change occurred"))
+          case data@Some(_) => complete(ResponseBody("A new book was created", data)) // Insert
+          case None => complete(ResponseBody("Request to update book successful")) // Update
         }
       }
     }
