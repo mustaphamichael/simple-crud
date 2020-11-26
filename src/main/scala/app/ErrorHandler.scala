@@ -1,7 +1,7 @@
 package app
 
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.ExceptionHandler
-import akka.http.scaladsl.server.MethodRejection
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.RejectionHandler
 import akka.http.scaladsl.server.Directives._
@@ -18,17 +18,17 @@ trait ErrorHandler extends JsonSupport {
   import ActorService._
 
   implicit def rejectionHandler: RejectionHandler =
-    RejectionHandler.newBuilder()
-      .handleAll[MethodRejection] { rejections =>
-        extractMethod { method =>
-          val methods = rejections.map(_.supported.name)
-          complete(MethodNotAllowed, ResponseBody(s"${method.name} is not allowed. Supported methods: ${methods.mkString(" or ")}!"))
-        }
+    RejectionHandler.default
+      .mapRejectionResponse {
+        case res@HttpResponse(_, _, ent: HttpEntity.Strict, _) =>
+          // since all Akka default rejection responses are Strict this will handle all rejections
+          val message = ent.data.utf8String.replaceAll("\"", """\"""")
+
+          // TODO: Use json marshalling library here
+          res.withEntity(HttpEntity(ContentTypes.`application/json`, s"""{"message": "$message"}"""))
+
+        case x => x // pass through all other types of responses
       }
-      .handleNotFound {
-        complete(NotFound, ResponseBody("The resource was not found"))
-      }
-      .result()
 
   implicit def exceptionHandler: ExceptionHandler =
     ExceptionHandler {
