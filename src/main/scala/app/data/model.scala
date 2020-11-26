@@ -5,7 +5,7 @@ package app.data
  * @project - simple-crud
  * @author  - Michael Mustapha
  */
-trait Model
+sealed trait Model
 
 case class Author(id: Option[Int], name: String) extends Model
 
