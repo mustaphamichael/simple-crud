@@ -14,6 +14,9 @@ import org.postgresql.util.PSQLException
  * @author  - Michael Mustapha
  */
 trait ErrorHandler extends JsonSupport {
+
+  import ActorService._
+
   implicit def rejectionHandler: RejectionHandler =
     RejectionHandler.newBuilder()
       .handleAll[MethodRejection] { rejections =>
@@ -32,7 +35,7 @@ trait ErrorHandler extends JsonSupport {
       case ex: PSQLException =>
         complete(InternalServerError, ResponseBody(ex.getServerErrorMessage.getDetail))
       case ex: Exception =>
-        println(s"System Error not Handled ::: $ex")
+        log.error(s"System Error not Handled ::: {}", ex)
         complete(InternalServerError, ResponseBody(ex.getMessage))
     }
 }

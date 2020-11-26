@@ -7,10 +7,11 @@ package app.data.persistence
  */
 trait DBInitializer extends Schema with PG {
 
+  import app.ActorService._
   import driver.api._
 
   // Start DB
-  println("Starting db..........")
+  log.info("Starting db..........")
   private val createDb = (authors.schema ++ books.schema).create
   //  createDb.statements.foreach(println) // for logging the SQL statement
   db.run(createDb)

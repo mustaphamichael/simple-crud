@@ -1,14 +1,11 @@
 package app
 
-import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import app.routes.{AuthorRoutes, BookRoutes}
 import app.data.persistence.DBInitializer
 
-import scala.concurrent.ExecutionContext
 import scala.io.StdIn
 
 /*
@@ -18,8 +15,8 @@ import scala.io.StdIn
  */
 
 object WebServer extends App with ErrorHandler with DBInitializer {
-  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "simple-crud-app")
-  implicit val ec: ExecutionContext = system.executionContext
+
+  import ActorService._
 
   lazy val authorRepo: AuthorRepo = new AuthorRepo
   lazy val bookRepo: BookRepo = new BookRepo
@@ -33,12 +30,12 @@ object WebServer extends App with ErrorHandler with DBInitializer {
   // bind routes to server
   val bindingFuture = Http().newServerAt("localhost", 3000).bind(routes)
 
-  println("Server currently running on http://localhost:3000")
+  log.info("Server currently running on http://localhost:3000")
   StdIn.readLine() // let it run until user presses return
   bindingFuture
     .flatMap(_.unbind()) // trigger unbinding from the port
     .onComplete(_ => {
-      println("Shutting down db..........")
+      log.info("Shutting down db..........")
       db.close() // close the db connection
       system.terminate() // and shutdown when done
     })
