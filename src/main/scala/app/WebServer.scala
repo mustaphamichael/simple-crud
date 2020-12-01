@@ -5,6 +5,8 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import app.routes.{AuthorRoutes, BookRoutes}
 import app.data.persistence.DBInitializer
+import app.swagger.SwaggerRoutes
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.io.StdIn
 
@@ -14,7 +16,7 @@ import scala.io.StdIn
  * @author  - Michael Mustapha
  */
 
-object WebServer extends App with ErrorHandler with DBInitializer {
+object WebServer extends App with AppConfig with ErrorHandler with DBInitializer {
 
   import ActorService._
 
@@ -23,14 +25,17 @@ object WebServer extends App with ErrorHandler with DBInitializer {
 
   // declare routes
   // Route.seal() is used to enable the custom rejection and exceptions declared in the ErrorHandler mixin
-  val routes: Route = Route.seal(
-    new AuthorRoutes(authorRepo).routes ~
-      new BookRoutes(bookRepo).routes)
+  val routes: Route = cors() {
+    Route.seal(
+      new AuthorRoutes(authorRepo).routes ~
+        new BookRoutes(bookRepo).routes ~
+        SwaggerRoutes.routes)
+  }
 
   // bind routes to server
-  val bindingFuture = Http().newServerAt("localhost", 3000).bind(routes)
+  val bindingFuture = Http().newServerAt(interface, port).bind(routes)
 
-  log.info("Server currently running on http://localhost:3000")
+  log.info(s"Server currently running on http://$interface:$port")
   StdIn.readLine() // let it run until user presses return
   bindingFuture
     .flatMap(_.unbind()) // trigger unbinding from the port
