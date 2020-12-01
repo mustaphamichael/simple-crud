@@ -9,7 +9,7 @@ import scala.concurrent.ExecutionContext
  * @project - simple-crud
  * @author  - Michael Mustapha
  */
-trait Schema extends DBOperationDef {
+trait DBSchema extends DBOperationDef {
 
   import driver.api._
 

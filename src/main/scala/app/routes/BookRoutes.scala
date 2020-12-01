@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import app.JsonSupport
-import app.data.persistence.Schema
+import app.data.persistence.DBSchema
 import app.data.{Book, Books, ResponseBody}
 
 import scala.concurrent.ExecutionContext
@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
  * @project - simple-crud
  * @author  - Michael Mustapha
  */
-class BookRoutes(repo: Schema#BookRepo)(implicit ec: ExecutionContext) extends JsonSupport {
+class BookRoutes(repo: DBSchema#BookRepo)(implicit ec: ExecutionContext) extends JsonSupport {
 
   val routes: Route = books ~ book
 
