@@ -8,14 +8,15 @@ services:
     ports:
       - 3000:3000
     environment:
-      - PSQL_URL=postgres://postgres:secret@postgres/simple-crud #Use an .env for this
+      - PSQL_URL=${PSQL_URL}
 
   postgres:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: simple-crud
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - 5432:5432
 
