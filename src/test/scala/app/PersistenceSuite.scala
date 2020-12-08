@@ -2,7 +2,7 @@ package app
 
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import app.data.{Author, Book}
-import app.data.persistence.{H2, Schema}
+import app.data.persistence.{H2, DBSchema}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Seconds, Span}
@@ -17,7 +17,7 @@ class PersistenceSuite
   extends AnyWordSpec
     with Matchers
     with ScalaFutures
-    with Schema
+    with DBSchema
     with H2
     with ScalatestRouteTest {
 

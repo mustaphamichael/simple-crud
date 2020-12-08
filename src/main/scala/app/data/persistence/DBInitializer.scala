@@ -5,7 +5,7 @@ package app.data.persistence
  * @project - simple-crud
  * @author  - Michael Mustapha
  */
-trait DBInitializer extends Schema with PG {
+trait DBInitializer extends DBSchema with PG {
 
   import app.ActorService._
   import driver.api._

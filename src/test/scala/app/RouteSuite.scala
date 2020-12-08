@@ -32,14 +32,14 @@ class RouteSuite
     "return a 404 error when the route does not exist" in {
       Get() ~> route ~> check {
         status shouldEqual NotFound
-        responseAs[ResponseBody] shouldEqual ResponseBody("The resource was not found")
+        responseAs[ResponseBody] shouldEqual ResponseBody("The requested resource could not be found.")
       }
     }
 
     "return a 405 error for method not allowed" in {
       Patch("/test") ~> route ~> check {
         status shouldEqual MethodNotAllowed
-        responseAs[ResponseBody].message shouldEqual "PATCH is not allowed. Supported methods: GET!"
+        responseAs[ResponseBody].message shouldEqual "HTTP method not allowed, supported methods: GET"
       }
     }
   }
