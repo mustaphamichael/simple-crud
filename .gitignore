@@ -1,0 +1,6 @@
+.idea
+.bsp
+target
+project
+logs
+*.env
