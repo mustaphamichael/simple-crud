@@ -1,3 +1,4 @@
 #!/bin/bash
 
-docker-compose -f stack.yml up -d
+sbt docker:stage docker:publishLocal
+docker-compose up --build -d

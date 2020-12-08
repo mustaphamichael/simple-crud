@@ -36,12 +36,12 @@ object WebServer extends App with AppConfig with ErrorHandler with DBInitializer
   val bindingFuture = Http().newServerAt(interface, port).bind(routes)
 
   log.info(s"Server currently running on http://$interface:$port")
-  StdIn.readLine() // let it run until user presses return
-  bindingFuture
-    .flatMap(_.unbind()) // trigger unbinding from the port
-    .onComplete(_ => {
-      log.info("Shutting down db..........")
-      db.close() // close the db connection
-      system.terminate() // and shutdown when done
-    })
+  //  StdIn.readLine() // let it run until user presses return
+  //  bindingFuture
+  //    .flatMap(_.unbind()) // trigger unbinding from the port
+  //    .onComplete(_ => {
+  //      log.info("Shutting down db..........")
+  //      db.close() // close the db connection
+  //      system.terminate() // and shutdown when done
+  //    })
 }

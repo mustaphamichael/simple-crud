@@ -1,6 +1,6 @@
 name := "simple-crud"
 
-version := "0.1"
+version := "1.0"
 
 scalaVersion := "2.13.3"
 
@@ -37,3 +37,15 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
   "com.h2database" % "h2" % h2Version % Test
 )
+
+// ### Docker Build ###
+
+import com.typesafe.sbt.packager.docker.DockerChmodType
+
+enablePlugins(JavaAppPackaging, AshScriptPlugin)
+dockerBaseImage := "openjdk:8-jre-alpine"
+packageName in Docker := packageName.value
+version in Docker := version.value
+dockerExposedPorts ++= Seq(3000)
+dockerChmodType := DockerChmodType.UserGroupWriteExecute
+// ### END ###

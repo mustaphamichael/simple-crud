@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  app:
+    image: simple-crud:1.0 # Image created by docker:publishLocal command
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
+    environment:
+      - PSQL_URL=postgres://postgres:secret@postgres/simple-crud #Use an .env for this
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: simple-crud
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
