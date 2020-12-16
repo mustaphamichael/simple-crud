@@ -2,7 +2,7 @@
 A simple **C**reate **R**ead **U**pdate **D**elete application using Akka-Http, Slick and PostgreSQL.
 
 ## Prerequisites
-- Java 8, 12
+- Java 8 or 12
 - sbt
 - docker and docker-compose (**[OPTIONAL]** for database setup)
 
@@ -14,6 +14,10 @@ Before running the service, ensure that the database is running:
 This is used to provide the details that are confidential to the application. Create a duplicate of the `.env.example` file and rename it as `.env`. Ensure to enter the required field as provided in the example.
 
 #### Using docker
+Build the application image by running the command below;
+````bash
+sh publish.sh
+````
 For database setup using *docker*, run the scripts below;
 - to download a [Postgres](http://www.postgresql.org/) and Adminer image (if they do not exist) and start the containers.
 ````bash
