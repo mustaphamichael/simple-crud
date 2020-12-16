@@ -42,10 +42,12 @@ libraryDependencies ++= Seq(
 
 import com.typesafe.sbt.packager.docker.DockerChmodType
 
-enablePlugins(JavaAppPackaging, AshScriptPlugin)
+enablePlugins(JavaAppPackaging, DockerPlugin, AshScriptPlugin)
 dockerBaseImage := "openjdk:8-jre-alpine"
 packageName in Docker := packageName.value
-version in Docker := version.value
+//version in Docker := version.value
 dockerExposedPorts ++= Seq(3000)
 dockerChmodType := DockerChmodType.UserGroupWriteExecute
+
+dockerUsername := Some("mmustapha")
 // ### END ###

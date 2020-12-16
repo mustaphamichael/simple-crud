@@ -2,7 +2,7 @@ version: '3.1'
 
 services:
   app:
-    image: simple-crud:1.0 # Image created by docker:publishLocal command
+    image: mmustapha/simple-crud:1.0 # ENSURE TO UPDATE THE TAG
     depends_on:
       - postgres
     ports:
