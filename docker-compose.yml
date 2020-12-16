@@ -8,6 +8,7 @@ services:
     ports:
       - 3000:3000
     environment:
+      - PUBLIC_HOST=${PUBLIC_HOST}
       - PSQL_URL=${PSQL_URL}
 
   postgres:

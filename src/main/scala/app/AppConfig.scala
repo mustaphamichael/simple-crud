@@ -12,5 +12,6 @@ trait AppConfig {
   private lazy val httpConfig = config.getConfig("http")
 
   lazy val interface: String = httpConfig.getString("host")
+  lazy val publicHost: String = httpConfig.getString("publicHost")
   lazy val port: Int = httpConfig.getInt("port")
 }

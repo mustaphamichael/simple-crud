@@ -13,7 +13,7 @@ import com.github.swagger.akka.model.{Contact, Info}
  */
 private object SwaggerDocService extends SwaggerHttpService with AppConfig {
   override val apiClasses: Set[Class[_]] = Set(classOf[BookRoutes], classOf[AuthorRoutes])
-  override val host = s"$interface:$port"
+  override val host = s"${if (!publicHost.isEmpty) publicHost else interface}:$port"
   override val info: Info = Info(
     description = "A simple CRUD app using Akka-Http and PostgreSQL",
     version = "1.0",
