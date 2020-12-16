@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose -f stack.yml down -v
+docker-compose down -v
