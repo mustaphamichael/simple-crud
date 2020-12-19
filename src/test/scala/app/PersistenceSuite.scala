@@ -1,7 +1,6 @@
 package app
 
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import app.data.{Author, Book}
 import app.data.persistence.{H2, DBSchema}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
@@ -37,7 +36,7 @@ class PersistenceSuite
     }
 
     "get a single data by id" in {
-      whenReady(authorRepo.findById(1))(_.get == Author(Some(1), "Martin Ordesky"))
+      whenReady(authorRepo.findById(1))(_.get.name == "Martin Ordesky")
       whenReady(bookRepo.findById(1))(_.get.authorId == 1)
     }
 
