@@ -1,5 +1,8 @@
 package app
 
+import java.sql.Timestamp
+import java.time.Instant
+
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import app.data._
 import spray.json._
@@ -9,8 +12,21 @@ import spray.json._
  * @project - simple-crud
  * @author  - Michael Mustapha
  */
-trait JsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
-  implicit val authorFormat = jsonFormat2(Author)
+trait TypeJsonProtocol extends DefaultJsonProtocol {
+  implicit val timestampFormat: JsonFormat[Timestamp] = new JsonFormat[Timestamp] {
+    override def write(obj: Timestamp): JsValue = JsString(obj.toString)
+
+    override def read(json: JsValue): Timestamp = json match {
+      case JsString(x) => Timestamp.from(Instant.parse(x))
+      case _ =>
+        throw new IllegalArgumentException(
+          s"Can not parse json value [$json] to a timestamp object")
+    }
+  }
+}
+
+trait JsonSupport extends SprayJsonSupport with TypeJsonProtocol {
+  implicit val authorFormat = jsonFormat3(Author)
   implicit val authorsFormat = jsonFormat1(Authors)
   implicit val bookFormat = jsonFormat4(Book)
   implicit val booksFormat = jsonFormat1(Books)
