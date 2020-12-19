@@ -1,7 +1,10 @@
 package app.routes
 
+import java.sql.Timestamp
+import java.time.Instant
+
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.Directives.{delete, _}
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import app.JsonSupport
 import app.data.persistence.DBSchema
@@ -25,6 +28,11 @@ import scala.concurrent.ExecutionContext
 @Path("/books")
 class BookRoutes(repo: DBSchema#BookRepo)(implicit ec: ExecutionContext) extends JsonSupport {
 
+  // A polymorphic is not used because of the Swagger dependency
+  case class BookResponse(message: String, data: Book)
+
+  case class BookList(message: String, data: Seq[Book])
+
   val routes: Route =
   // routes with `/books`
     path("books") {
@@ -42,11 +50,11 @@ class BookRoutes(repo: DBSchema#BookRepo)(implicit ec: ExecutionContext) extends
     requestBody = new RequestBody(content = Array(new Content(schema = new Schema(implementation = classOf[Book])))),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Book created successfully",
-        content = Array(new Content(schema = new Schema(implementation = classOf[ResponseBody])))))
+        content = Array(new Content(schema = new Schema(implementation = classOf[BookResponse])))))
   )
   def create: Route = post {
     entity(as[Book]) { book =>
-      onSuccess(repo.insert(book)) { d =>
+      onSuccess(repo.insert(book.copy(dateCreated = Some(Timestamp.from(Instant.now()))))) { d =>
         complete(StatusCodes.Created, ResponseBody("Book created successfully", Some(d)))
       }
     }
@@ -58,11 +66,11 @@ class BookRoutes(repo: DBSchema#BookRepo)(implicit ec: ExecutionContext) extends
   @Operation(summary = "Get all books", description = "Get all books", tags = Array("Book"),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Get books successful",
-        content = Array(new Content(schema = new Schema(implementation = classOf[Books])))))
+        content = Array(new Content(schema = new Schema(implementation = classOf[BookList])))))
   )
   def getAll: Route = get {
     onSuccess(repo.all) { d =>
-      complete(ResponseBody("Get books successful", Some(Books(d))))
+      complete(ResponseBody("Get authors successful", Some(Books(d))))
     }
   }
 
@@ -75,11 +83,11 @@ class BookRoutes(repo: DBSchema#BookRepo)(implicit ec: ExecutionContext) extends
     responses = Array(
       new ApiResponse(responseCode = "200", description = "A new book will be created if the id does not exist",
         content = Array(new Content(schema = new Schema(implementation = classOf[Book])),
-          new Content(schema = new Schema(implementation = classOf[ResponseBody])))))
+          new Content(schema = new Schema(implementation = classOf[BookResponse])))))
   )
   def edit: Route = put {
     entity(as[Book]) { book =>
-      onSuccess(repo.update(book)) {
+      onSuccess(repo.update(book.copy(dateCreated = Some(Timestamp.from(Instant.now()))))) {
         case data@Some(_) => complete(ResponseBody("A new book was created", data)) // Insert
         case None => complete(ResponseBody("Request to update book successful")) // Update
       }
@@ -94,9 +102,9 @@ class BookRoutes(repo: DBSchema#BookRepo)(implicit ec: ExecutionContext) extends
     parameters = Array(new Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "Book id")),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Get book successful",
-        content = Array(new Content(schema = new Schema(implementation = classOf[Book])))),
+        content = Array(new Content(schema = new Schema(implementation = classOf[BookResponse])))),
       new ApiResponse(responseCode = "404", description = "Not Found",
-        content = Array(new Content(schema = new Schema(implementation = classOf[Book])))))
+        content = Array(new Content(schema = new Schema(implementation = classOf[ResponseBody])))))
   )
   def getOne(@Parameter(hidden = true) id: Int): Route = get {
     onSuccess(repo.findById(id)) {
@@ -113,7 +121,7 @@ class BookRoutes(repo: DBSchema#BookRepo)(implicit ec: ExecutionContext) extends
     parameters = Array(new Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "Book id")),
     responses = Array(
       new ApiResponse(responseCode = "200", description = "Book deleted",
-        content = Array(new Content(schema = new Schema(implementation = classOf[Book])))),
+        content = Array(new Content(schema = new Schema(implementation = classOf[ResponseBody])))),
       new ApiResponse(responseCode = "404", description = "Not Found"))
   )
   def deleteOne(@Parameter(hidden = true) id: Int): Route = delete {
