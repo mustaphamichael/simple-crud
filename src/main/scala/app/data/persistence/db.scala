@@ -1,5 +1,7 @@
 package app.data.persistence
 
+import java.sql.Timestamp
+
 import app.data.Model
 import slick.jdbc.JdbcProfile
 import slick.lifted
@@ -37,6 +39,8 @@ trait TableDefinition extends DB {
   abstract class BaseTable[M <: Model](tag: Tag, _tableName: String)
     extends Table[M](tag, _tableName) {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+
+    def dateCreated = column[Timestamp]("date_created", O.SqlType("TIMESTAMP DEFAULT NOW()"))
   }
 
 }

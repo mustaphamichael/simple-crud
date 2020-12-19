@@ -1,5 +1,8 @@
 package app.data
 
+import java.sql.Timestamp
+import java.time.Instant
+
 import io.swagger.v3.oas.annotations.media.Schema
 
 /*
@@ -7,19 +10,26 @@ import io.swagger.v3.oas.annotations.media.Schema
  * @project - simple-crud
  * @author  - Michael Mustapha
  */
-sealed trait Model
+sealed trait Model {
+  @Schema(required = false, implementation = classOf[Int])
+  def id: Option[Int] = Some(0)
 
-case class Author(@Schema(required = false, implementation = classOf[Int]) id: Option[Int],
-                  name: String)
-  extends Model
+  @Schema(required = false, implementation = classOf[Timestamp])
+  def dateCreated: Option[Timestamp] = Some(Timestamp.from(Instant.now()))
+}
+
+case class Author(override val id: Option[Int],
+                  name: String,
+                  override val dateCreated: Option[Timestamp]
+                 ) extends Model
 
 case class Authors(authors: Seq[Author]) extends Model
 
-case class Book(@Schema(required = false, implementation = classOf[Int]) id: Option[Int],
+case class Book(override val id: Option[Int],
                 title: String,
                 authorId: Int,
-                @Schema(required = false, implementation = classOf[Long]) dateCreated: Option[Long])
-  extends Model
+                override val dateCreated: Option[Timestamp]
+               ) extends Model
 
 case class Books(books: Seq[Book]) extends Model
 

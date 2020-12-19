@@ -19,7 +19,7 @@ trait DBSchema extends DBOperationDef {
   class Authors(tag: Tag) extends BaseTable[Author](tag, "AUTHORS") {
     def name = column[String]("name")
 
-    def * = (id.?, name) <> (Author.tupled, Author.unapply)
+    def * = (id.?, name, dateCreated.?) <> (Author.tupled, Author.unapply)
   }
 
   lazy val authors = TableQuery[Authors]
@@ -36,9 +36,7 @@ trait DBSchema extends DBOperationDef {
 
     def authorId = column[Int]("author_id")
 
-    def dateCreated = column[Option[Long]]("date_created", O.Default(Some(System.currentTimeMillis())))
-
-    def * = (id.?, title, authorId, dateCreated) <> (Book.tupled, Book.unapply)
+    def * = (id.?, title, authorId, dateCreated.?) <> (Book.tupled, Book.unapply)
 
     def authorFk =
       foreignKey("author_fk", authorId, authors)(_.id, onUpdate = ForeignKeyAction.Restrict, onDelete = ForeignKeyAction.Cascade)
